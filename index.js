@@ -10,24 +10,29 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
-passport.use(new LocalStrategy(function (username, password, done) {
-    if(username == undefined)
-        return done(new Error("err", false));
-    return done(null, {username, password});
-}));
+passport.use("local", new LocalStrategy(
+    {
+        usernameField: "email",
+        passwordField: "password"
+    },
+    function (username, password, done) {
+        if(username == undefined)
+            return done(new Error("err", false));
+        return done(null, { username, password });
+    }
+));
 
 passport.serializeUser(function(user, done) {
-    // TODO:
-    done(null, `${user.username}`);
+    done(null, user);
 });
 
-passport.deserializeUser(function(user, done) {
-    // TODO:
-    done(null, { username: user, password: 123 });
+passport.deserializeUser(function(obj, done) {
+    done(null, obj);
 });
 
 const app = express();
 
+app.use(express.json());
 app.use(cookieParser("CookieSecret"));
 app.use(session({
     secret: "SessionSecret",
@@ -43,7 +48,7 @@ app.use(passport.session());
 app.get("/", (req, res) => {
     res.send("But nobody came...");
 })
-
+app.use("/auth", require('./routes/auth'));
 app.use("/api", require('./routes/api'));
 
 app.listen(PORT, HOSTNAME, () => console.log(`API Server is running on ${HOSTNAME}:${PORT}`));

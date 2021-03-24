@@ -2,15 +2,9 @@ const passport = require('passport');
 const express = require('express');
 const router = express.Router();
 
-const authMiddleware = require('../../lib/authMiddleware');
+const ensureAuthenticated = require('../../lib/ensureAuthenticated');
+const { route } = require('./user');
 
-router.use("/login", passport.authenticate('local', { successRedirect: "/" }));
-router.use("/logout", (req, res) => {
-    req.session.destroy();
-    res.redirect("/");
-})
-
-router.use("/user", authMiddleware)
-    .use(require('./user'));
+router.use("/user", ensureAuthenticated, require('./user'));
 
 module.exports = router;
