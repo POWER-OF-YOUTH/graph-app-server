@@ -65,6 +65,11 @@ async function checkLoginExisting(req, res, next) {
     }
 }
 
+/**
+ * 
+ * @param {String} login 
+ * @returns {Promise<any>}
+ */
 async function find(login) {
     let users = await driver.session().run("MATCH (n:User) WHERE n.login = $login RETURN n AS user", { login });
     if(users.records.length === 1) {
