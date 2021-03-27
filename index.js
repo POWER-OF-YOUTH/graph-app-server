@@ -8,21 +8,34 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 
 const passport = require('passport');
+
 const LocalStrategy = require('passport-local').Strategy;
+
+const user = require('./lib/user');
 
 passport.use("local", new LocalStrategy(
     {
-        usernameField: "email",
+        usernameField: "login",
         passwordField: "password"
     },
-    function (username, password, done) {
-        if(username == undefined)
-            return done(new Error("err", false));
-        return done(null, { username, password });
+    async function (username, password, done) {
+        try {
+            let u = await user.find(username);
+
+            if (!u)
+                done(null, false, { message: "Incorrect login!" });
+            else if (u.password != password)
+                done(null, false, { message: "Incorrect password!" });
+            else
+                done(null, { username: u.login, password: u.password });
+        }
+        catch (err) {
+            done(err); 
+        }
     }
 ));
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function(userr, done) {
     done(null, user);
 });
 
