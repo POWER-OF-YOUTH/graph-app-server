@@ -3,7 +3,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const router = express.Router();
 
-const user = require('../../lib/user');
+const user = require('../../controllers/user');
 
 /** User Schema:
  * {

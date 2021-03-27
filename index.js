@@ -11,7 +11,7 @@ const passport = require('passport');
 
 const LocalStrategy = require('passport-local').Strategy;
 
-const user = require('./lib/user');
+const user = require('./controllers/user');
 
 passport.use("local", new LocalStrategy(
     {
