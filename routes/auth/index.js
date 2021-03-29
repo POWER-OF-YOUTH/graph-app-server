@@ -20,16 +20,15 @@ router.post("/register",
     body("login").isString(),
     body("password").isLength({ min: 6, max: 24 }),
     body("email").isEmail(),
-    body("sex").isString(),
+    body("sex").isString().isIn(["male", "woman", "unknown"]),
     body("name").isString().isLength({ max: 50 }),
     body("surname").isString().isLength({ max: 50 }),
-    body("patronymic").isString().isLength({ max: 50 }),
+    body("patronymic").isString().isLength({ max: 50 }), // can be empty
     (req, res, next) => {
         const errors = validationResult(req);
 
-        if(!errors.isEmpty()) {
+        if(!errors.isEmpty())
             res.status(400).json(errors);
-        }
         else
             next();
     },
