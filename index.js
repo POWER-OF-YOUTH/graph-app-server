@@ -11,7 +11,7 @@ const passport = require('passport');
 
 const LocalStrategy = require('passport-local').Strategy;
 
-const { user } = require('./controllers/');
+const user = require('./controllers/api/user');
 
 passport.use("local", new LocalStrategy(
     {
@@ -27,7 +27,7 @@ passport.use("local", new LocalStrategy(
             else if (u.password != password)
                 done(null, false, { message: "Incorrect password!" });
             else
-                done(null, { username: u.login, password: u.password });
+                done(null, { login: u.login, password: u.password });
         }
         catch (err) {
             done(err); 
@@ -35,7 +35,7 @@ passport.use("local", new LocalStrategy(
     }
 ));
 
-passport.serializeUser(function(userr, done) {
+passport.serializeUser(function(user, done) {
     done(null, user);
 });
 
