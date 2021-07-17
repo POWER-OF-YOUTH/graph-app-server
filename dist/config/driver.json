@@ -1,0 +1,5 @@
+{
+    "DATABASE_HOSTNAME": "bolt://localhost:7687",
+    "DATABASE_USERNAME": "neo4j",
+    "DATABASE_PASSWORD": "niki3223"
+}
