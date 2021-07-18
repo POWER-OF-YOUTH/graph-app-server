@@ -1,4 +1,5 @@
 import { Server, ServerOptions } from 'socket.io';
+import passport from 'passport';
 import validator from 'validator';
 import http from "http";
 import express from 'express';
@@ -6,15 +7,14 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 
 import authRouter from './routes/auth';
+import apiRouter from './routes/api';
 
 import driver from './services/driver';
-import { User } from './models/user';
+import User from './models/user';
 import UserMapper from './models/user_mapper';
 
 //import socketRouter from './routes/socket';
 import socketHandler from './socket_handler';
-
-const passport = require('passport');
 
 const LocalStrategy = require('passport-local').Strategy;
 
@@ -74,8 +74,6 @@ app.get("/", (req, res) => {
 //app.use(socketRouter);
 
 app.use("/auth", authRouter);
-/*
-app.use("/api", require('./routes/api'));
-*/
+app.use("/api", apiRouter);
 
 export { app, httpServer, io };

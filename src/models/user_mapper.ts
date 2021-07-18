@@ -1,15 +1,29 @@
 import { Driver } from 'neo4j-driver';
+import { GraphMapper, Graph } from 'graph-app-core';
 
-import { User } from './user';
+import User from './user';
+import Role from './role';
 
 class UserMapper {
-    private readonly driver: Driver;
+    private readonly _driver: Driver;
 
+    /**
+     * 
+     * @param {Driver} driver
+     */
     constructor(driver: Driver) {
         if (driver == null)
             throw new Error(); // TODO: Error message
         
-        this.driver = driver;
+        this._driver = driver;
+    }
+
+    /**
+     * 
+     * @returns {Driver}
+     */
+    get driver(): Driver {
+        return this._driver;
     }
 
     /**
@@ -38,7 +52,16 @@ class UserMapper {
             if (dbResponse.records.length == 0)
                 return null;
 
-            const user = new User(dbResponse.records[0].get("data"));
+            const gm = new GraphMapper(this._driver);
+
+            const graphsMap = new Map<Role, Array<Graph>>();
+            for (let role of Object.values(Role)) {
+                const graphs: Array<Graph> = await Promise.all(dbResponse.records[0].get("data")[role].map(async (graphId: string) =>
+                    await gm.findBy({ id: graphId })
+                ));
+                graphsMap.set(<Role>role, graphs);
+            }
+            const user = new User(dbResponse.records[0].get("data"), graphsMap);
 
             return user;
         }
@@ -104,11 +127,13 @@ class UserMapper {
                         name: user.name,
                         surname: user.surname,
                         patronymic: user.patronymic,
-                        sex: user.sex
+                        sex: user.sex,
+                        guest: user.graphs.get(Role.Guest)?.map(g => g.id),
+                        editor: user.graphs.get(Role.Editor)?.map(g => g.id),
+                        owner: user.graphs.get(Role.Owner)?.map(g => g.id)
                     }
                 }
             };
-
             const dbResponse = await session.run(`
                 MERGE (u:User { login: $data.login })
                 SET u = $data.userData

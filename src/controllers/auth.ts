@@ -1,6 +1,7 @@
 import driver from '../services/driver';
 import UserMapper from '../models/user_mapper';
-import { User, UserData } from '../models/user';
+import UserData from '../models/user_data';
+import User from '../models/user';
 
 async function register(req: any, res: any) { // TODO: Types
     try {

@@ -3,12 +3,13 @@ import { Socket } from 'socket.io';
 import validator from 'validator';
 
 import driver from './services/driver';
-import { ClientEvents, ServerEvents, UserData, GraphId } from './events';
+import UserData from './models/user_data';
+import { ClientEvents, ServerEvents } from './events';
 import { GraphMapper } from 'graph-app-core';
 
 function socketHandler(socket: Socket) {
     type SessionData = { 
-        room: GraphId | undefined, 
+        room: string | undefined, 
         user: UserData | undefined 
     };
 
@@ -17,7 +18,7 @@ function socketHandler(socket: Socket) {
         user: undefined
     }
 
-    socket.on("user:connect", async (user: UserData, graphId: GraphId) => {
+    socket.on("user:connect", async (user: UserData, graphId: string) => {
         if (!validator.isUUID(graphId)) { // TODO: validate user data
             socket.disconnect();
             return;

@@ -1,3 +1,7 @@
+import driver from './services/driver';
+import UserMapper from "./models/user_mapper";
+import User from './models/user';
+/*
 import { io } from 'socket.io-client';
 
 const socket = io("http://localhost:3000/socket");
@@ -26,5 +30,14 @@ socket.on("disconnect", () => {
 socket.on("user:gone", (user) => {
     console.log(`[${user.name}] gone!`);
 })
+*/
+
+async function foo() {
+    const um = new UserMapper(driver);
+    const user: User | null = await um.findByLogin("Aceki320");
+    console.log(user);
+}
+
+foo();
 
 //console.log(socket.connected);

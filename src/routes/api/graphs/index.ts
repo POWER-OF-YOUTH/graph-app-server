@@ -1,21 +1,14 @@
-/*
-const express = require('express');
-const { Core, Property } = require('graph-app-core');
-const router = express.Router();
-const { body, param } = require('express-validator');
+import express from 'express';
+import { body, param } from 'express-validator';
 
-const core = require('../../../services/core');
-const graphs = require('../../../../controllers/api/graphs');
+import requestValidator from '../../../services/request_validator';
+import driver from '../../../services/driver';
+import graphsController from '../../../controllers/graphs/graphs';
 
-const validator = require('../../../lib/validator');
+const graphsRouter = express.Router();
 
-const classes = require("./classes");
-const nodes = require("./nodes");
-
-router.get("/", 
-    body("extended").isBoolean(),
-    validator,
-    async (req, res) => {
+graphsRouter.get("/", graphsController.getUserGraphs);
+        /*
         try {
             let user = req.session.passport.user;
 
@@ -42,9 +35,8 @@ router.get("/",
                 ]
             });
         }
-    }
-);
-
+        */
+/*
 router.post("/",
     body("name").isString(),
     validator,
@@ -210,5 +202,4 @@ router.post("/:graphId/classes",
 );
 */
 
-//module.exports = router;
-module.exports = {};
+export default graphsRouter;

@@ -1,29 +1,30 @@
-"use strict";
+import { Graph } from 'graph-app-core';
 
-const neo4j = require('neo4j-driver');
-const driver = require('../services/driver');
-
-type UserData = { 
-    login: string, 
-    password: string, 
-    email: string, 
-    sex: string, 
-    name: string, 
-    surname: string, 
-    patronymic: string 
-};
+import Role from './role';
+import UserData from "./user_data";
 
 class User
 {
-    private userData: UserData;
+    private readonly _userData: UserData;
+    private readonly _graphsMap: Map<Role, Array<Graph>>;
+
     /**
      * Private constructor
      * @param {UserData} userData
+     * @param {Map<Role, Array<Graph>>} graphsMap
      */
-    constructor(userData: UserData) {
+    constructor(userData: UserData, graphsMap: Map<Role, Array<Graph>> | null = null) { // TODO: validation
         User.normalizeUserData(userData);
+        User.checkUserData(userData);
+        this._userData = userData;
 
-        this.userData = userData;
+        if (graphsMap == null) {
+            graphsMap = new Map<Role, Array<Graph>>();
+            graphsMap.set(Role.Guest, []);
+            graphsMap.set(Role.Editor, []);
+            graphsMap.set(Role.Owner, []);
+        }
+        this._graphsMap = graphsMap;
     }
 
     /**
@@ -31,7 +32,7 @@ class User
      * @returns {string}
      */
     get login() {
-        return this.userData.login;
+        return this._userData.login;
     }
 
     /**
@@ -39,7 +40,7 @@ class User
      * @returns {string}
      */
     get password() {
-        return this.userData.password;
+        return this._userData.password;
     }
 
     /**
@@ -47,7 +48,7 @@ class User
      * @param {string} value
      */
     set password(value) {
-        this.userData.password = value;
+        this._userData.password = value;
     }
 
     /**
@@ -55,7 +56,7 @@ class User
      * @returns {string}
      */
     get email() {
-        return this.userData.email;
+        return this._userData.email;
     }
 
     /**
@@ -63,7 +64,7 @@ class User
      * @returns {string}
      */
     get sex() {
-        return this.userData.sex;
+        return this._userData.sex;
     }
 
     /**
@@ -71,7 +72,7 @@ class User
      * @param {string} value
      */
     set sex(value) {
-        this.userData.sex = value;
+        this._userData.sex = value;
     }
 
     /**
@@ -79,7 +80,7 @@ class User
      * @returns {string}
      */
     get name() {
-        return this.userData.name;
+        return this._userData.name;
     }
 
     /**
@@ -87,7 +88,7 @@ class User
      * @param {string} value 
      */
     set name(value) {
-        this.userData.name = value;
+        this._userData.name = value;
     }
 
     /**
@@ -95,7 +96,7 @@ class User
      * @returns {string}
      */
     get surname() {
-        return this.userData.surname;
+        return this._userData.surname;
     }
 
     /**
@@ -103,7 +104,7 @@ class User
      * @param {string} value 
      */
     set surname(value) {
-        this.userData.surname = value;
+        this._userData.surname = value;
     }
 
     /**
@@ -111,14 +112,31 @@ class User
      * @returns {string}
      */
     get patronymic() {
-        return this.userData.patronymic;
+        return this._userData.patronymic;
     }
 
     /**
      * @param {string} value
      */
     set patronymic(value) {
-        this.userData.patronymic = value;
+        this._userData.patronymic = value;
+    }
+
+    /**
+     * 
+     * @returns {ReadonlyMap<Role, Array<Graph>>}
+     */
+    get graphs(): ReadonlyMap<Role, Array<Graph>> {
+        return this._graphsMap;
+    }
+
+    /**
+     * 
+     * @param {Role} role
+     * @param {Graph} graph
+     */
+    addGraph(role: Role, graph: Graph) {
+        this._graphsMap.get(role)?.push(graph);
     }
 
     /**
@@ -129,6 +147,17 @@ class User
     private static normalizeUserData(userData: UserData) {
         userData.email = userData.email.toLowerCase();
     }
+
+    /**
+     * 
+     * @param {UserData} userData
+     * @returns {void}
+     */
+    private static checkUserData(userData: UserData) {
+        if (userData == null)
+            throw new Error(); // TODO: Error message
+        // TODO: validation
+    }
 }
 
-export { User, UserData };
+export default User;
