@@ -22,7 +22,6 @@ async function register(req: any, res: any) { // TODO: Types
         });
     }
     catch (err) {
-        console.log(err);
         res.status(500).json(err);
     }
 }
