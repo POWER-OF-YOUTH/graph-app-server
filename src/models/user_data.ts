@@ -2,7 +2,7 @@ type UserData = {
     login: string, 
     password: string, 
     email: string, 
-    sex: string, 
+    sex: "male" | "woman" | "unknown", 
     name: string, 
     surname: string, 
     patronymic: string 

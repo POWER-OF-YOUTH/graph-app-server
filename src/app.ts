@@ -14,7 +14,8 @@ import User from './models/user';
 import UserMapper from './models/user_mapper';
 
 //import socketRouter from './routes/socket';
-import socketHandler from './socket_handler';
+import socketHandler from './socket'
+import { ClientEvents, ServerEvents } from './socket/events';
 
 const LocalStrategy = require('passport-local').Strategy;
 
@@ -51,7 +52,7 @@ passport.deserializeUser(function(obj: any, done: any) {
 
 const app = express();
 const httpServer = http.createServer(app);
-const io = new Server(httpServer);
+const io = new Server<ClientEvents, ServerEvents>(httpServer);
 
 io.of("/socket").on("connection", socketHandler);
 

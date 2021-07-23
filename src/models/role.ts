@@ -1,7 +1,7 @@
 enum Role {
-    Guest = "guest",
-    Editor = "editor",
-    Owner = "owner"
+    Guest,
+    Editor,
+    Owner
 }
 
 export default Role;

@@ -2,16 +2,12 @@
 import { Socket } from 'socket.io';
 import validator from 'validator';
 
-import driver from './services/driver';
-import UserData from './models/user_data';
+import driver from '../services/driver';
 import { ClientEvents, ServerEvents } from './events';
+import { SessionData, UserData } from './types';
 import { GraphMapper } from 'graph-app-core';
 
-function socketHandler(socket: Socket) {
-    type SessionData = { 
-        room: string | undefined, 
-        user: UserData | undefined 
-    };
+function socketHandler(socket: Socket<ClientEvents, ServerEvents>) { // TODO: User data validation 
 
     let data: SessionData = { 
         room: undefined,
@@ -39,14 +35,14 @@ function socketHandler(socket: Socket) {
             id: graph.id,
             name: graph.name,
             description: graph.description,
-            date: graph.date
+            //date: graph.date
         });
         console.log(user);
     });
     socket.on("disconnect", () => {
         if (data.room)
-            socket.to(data.room).emit("user:gone", data.user);
-    })
+            socket.to(data.room).emit("user:gone", <UserData>data.user);
+    });
 }
 
 export default socketHandler;

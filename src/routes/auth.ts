@@ -22,7 +22,7 @@ const authRouter = express.Router();
 authRouter.post("/register",
     body("login").isString(),
     body("password").isString().isLength({ min: 6, max: 24 }),
-    body("email").isEmail(),
+    body("email").isEmail().normalizeEmail(),
     body("sex").isString().isIn(["male", "woman", "unknown"]),
     body("name").isString().isLength({ max: 50 }),
     body("surname").isString().isLength({ max: 50 }),

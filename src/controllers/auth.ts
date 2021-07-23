@@ -5,6 +5,7 @@ import User from '../models/user';
 
 async function register(req: any, res: any) { // TODO: Types
     try {
+        console.log("here");
         const um = new UserMapper(driver);
 
         const userData: UserData = req.body;
